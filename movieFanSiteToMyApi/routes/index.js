@@ -25,14 +25,13 @@ router.get("/", (req, res, next) => {
     const parsedData = JSON.parse(data);
     //send to web page for looking
     // res.json(parsedData);
-    console.log(parsedData.results);
     res.render("index", { parsedData: parsedData.results });
   });
 });
 
 router.get("/movie/:id", (req, res, next) => {
   const movieId = req.params.id;
-  const thisMovieYrl = `${apiBaseUrl}/movie/${movieId}?api_key=${apiKey}&include_adult=true`;
+  const thisMovieYrl = `${apiBaseUrl}/movie/${movieId}?api_key=${apiKey}`;
   request.get(thisMovieYrl, (err, response, data) => {
     const parsedData = JSON.parse(data);
     res.render("single-movie", { movie: parsedData });
@@ -48,7 +47,7 @@ router.post("/search", (req, res, next) => {
   const url = `https://api.themoviedb.org/3/search/${cat}?api_key=${apiKey}&language=en-US&query=${search}&page=1&include_adult=true`;
   request.get(url, (err, response, data) => {
     const parsedData = JSON.parse(data);
-    console.log(parsedData);
+    // console.log(parsedData);
     // res.json(parsedData);
     let toRender = cat === "movie" ? "searched" : "actors";
     res.render(toRender, { parsedData: parsedData.results, searched: req.body.movieSearch });

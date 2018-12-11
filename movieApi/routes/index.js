@@ -13,17 +13,17 @@ router.get("/most_popular", function(req, res, next) {
   if (page === undefined) {
     page = 1;
   }
-  //check the api key
-  if (req.query.api_key !== "123456789") {
-    res.json("Invalid api key");
-  } else {
+  //check the api key in app middleware
+  // if (req.query.api_key !== "123456789") {
+  //   res.json("Invalid api key");
+  // } else {
     let mostPopular = movies.filter(movie => movie.most_popular);
     const resPerPage = 20;
     const startPage = page * resPerPage - resPerPage;
     const endPage = startPage + resPerPage-1;
     mostPopular = mostPopular.slice(startPage, endPage);
     res.json({results:mostPopular});
-  }
+  
 });
 
 module.exports = router;
