@@ -79,4 +79,7 @@ router.post("/:movieId/rating", requireJSON, (req, res, next) => {
 router.delete("/:movieId/rating", requireJSON, (req, res, next) => {
   res.json({ msg: "Rating deleted" });
 });
+
+
+
 module.exports = router;

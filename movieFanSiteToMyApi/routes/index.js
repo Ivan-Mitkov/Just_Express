@@ -41,11 +41,10 @@ router.get("/movie/:id", (req, res, next) => {
 router.post("/search", (req, res, next) => {
   // res.send("Working")
   // console.log(req.body);
+  const userSearchTerm = encodeURI(req.body.movieSearch);
   const cat = req.body.cat;
-  const search = encodeURI(req.body.movieSearch);
-  
-  const url = `https://api.themoviedb.org/3/search/${cat}?api_key=${apiKey}&language=en-US&query=${search}&page=1&include_adult=true`;
-  request.get(url, (err, response, data) => {
+  const movieUrl = `${apiBaseUrl}/search/${cat}?query=${userSearchTerm}&api_key=${apiKey}`
+  request.get(movieUrl, (err, response, data) => {
     const parsedData = JSON.parse(data);
     // console.log(parsedData);
     // res.json(parsedData);
