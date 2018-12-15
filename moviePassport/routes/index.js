@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const request = require("request");
-const passport=require('passport');
+const passport = require("passport");
 
 //my api key for https://www.themoviedb.org/
 const apiKey = require("../apiKey").api;
@@ -19,6 +19,12 @@ router.use((req, res, next) => {
 });
 /* GET home page. */
 router.get("/", (req, res, next) => {
+  //req.user from passport
+  // In this example, only the user ID is serialized to the session,
+  //keeping the amount of data stored within the session small.
+  //When subsequent requests are received, this ID is used to find the user,
+  // which will be restored to req.user.
+  console.log("req.user: ", req.user);
   request.get(nowPlayingUrl, (err, response, data) => {
     console.log("Error: ", err);
     const parsedData = JSON.parse(data);
@@ -27,7 +33,19 @@ router.get("/", (req, res, next) => {
 });
 
 //login route
-router.get('/login',passport.authenticate('github'))
+router.get("/login", passport.authenticate("github"));
+router.get("/favorites", (req, res) => {
+  res.json(req.user);
+});
+//for callback where github send where WE told him to send
+//redirect is commonly issued after authenticating a request.
+router.get(
+  "/auth",
+  passport.authenticate("github", {
+    successRedirect: "/",
+    failureRedirect: "/loginfail"
+  })
+);
 //============
 router.get("/movie/:id", (req, res, next) => {
   const movieId = req.params.id;
@@ -38,12 +56,12 @@ router.get("/movie/:id", (req, res, next) => {
   });
 });
 
-router.post("/search", (req, res, next) => { 
+router.post("/search", (req, res, next) => {
   const userSearchTerm = encodeURI(req.body.movieSearch);
   const cat = req.body.cat;
   const movieUrl = `${apiBaseUrl}/search/${cat}?query=${userSearchTerm}&api_key=${apiKey}&include_adult=true`;
   request.get(movieUrl, (err, response, data) => {
-    const parsedData = JSON.parse(data);  
+    const parsedData = JSON.parse(data);
     let toRender = cat === "movie" ? "searched" : "actors";
     res.render(toRender, {
       parsedData: parsedData.results,
